@@ -4,11 +4,23 @@ Easy-to-use package for interacting with the CSGOEmpire Trading API.
 ### Issues & Questions
 Feel free to create a discussion in the repository if you've got a question. Any issues should be reported in the issues tab directly.
 
+## Installation
+
+```bash
+npm install csgoempire-wrapper
+```
+
 ## Getting Started
 
 ### Signing in and establishing socket connection
 
 ```js
+// CommonJS
+const { CSGOEmpire } = require('csgoempire-wrapper');
+
+// ES6
+import { CSGOEmpire } from 'csgoempire-wrapper';
+
 // API-key can be created on https://csgoempire.com/trading/apikey
 const account = new CSGOEmpire('YOUR_API_KEY');
 ```
