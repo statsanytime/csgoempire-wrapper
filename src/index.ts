@@ -1,3 +1,6 @@
 import CSGOEmpire from "./CSGOEmpire";
 
-export default CSGOEmpire;
+export {
+    CSGOEmpire as default,
+    CSGOEmpire,
+};
