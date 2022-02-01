@@ -27,7 +27,10 @@ export default class Item extends EventEmitter {
         this.csgoempireInstance = csgoempireInstance;
 
         this.assignData(data);
-        this.listenForUpdates();
+
+        if (this.csgoempireInstance.socket) {
+            this.listenForUpdates();
+        }
     }
 
     assignData(data: any) {

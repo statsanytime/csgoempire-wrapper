@@ -9,7 +9,9 @@ export default class Shop {
         this.items = items;
         this.csgoempireInstance = csgoempireInstance;
 
-        this.listenForEvents();
+        if (this.csgoempireInstance.socket) {
+            this.listenForEvents();
+        }
     }
 
     listenForEvents() {
