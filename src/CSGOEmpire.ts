@@ -185,8 +185,19 @@ export default class CSGOEmpire {
         const res = await this.get('/trading/user/trades');
 
         return {
-            deposits: res.data.deposits.map((item: Object) => new DepositItem(item, this)),
-            withdrawals: res.data.withdrawals.map((item: Object) => new WithdrawItem(item, this)),
+            deposits: res.data.data.deposits.map((deposit: any) => new DepositItem({
+                ...deposit.items[0],
+                deposit_id: deposit.id,
+            }, this)),
+
+            withdrawals: res.data.data.withdrawals.map((withdrawal: any) => new WithdrawItem({
+                ...withdrawal.items[0],
+                auction_highest_bid: withdrawal.metadata?.auction_highest_bid,
+                auction_highest_bidder: withdrawal.metadata?.auction_highest_bidder,
+                auction_number_of_bids: withdrawal.metadata?.auction_number_of_bids,
+                auction_ends_at: withdrawal.metadata?.auction_ends_at,
+                auction_auto_withdraw_failed: withdrawal.metadata?.auction_auto_withdraw_failed,
+            }, this)),
         };
     }
 

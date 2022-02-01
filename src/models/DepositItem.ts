@@ -39,6 +39,7 @@ export default class DepositItem extends Item {
         this.quality = data.quality;
         this.rarity = data.rarity;
         this.type = data.type;
+        this.deposit_id = data.deposit_id;
     }
 
     async deposit(custom_price_percentage: number = 0) {
