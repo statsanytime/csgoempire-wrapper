@@ -28,7 +28,7 @@ export default class Item extends EventEmitter {
 
         this.assignData(data);
 
-        if (this.csgoempireInstance.socket) {
+        if (this.csgoempireInstance.connectToSocket) {
             this.listenForUpdates();
         }
     }
@@ -53,7 +53,7 @@ export default class Item extends EventEmitter {
     }
 
     listenForUpdates() {
-        this.csgoempireInstance.socket.on('updated_item', (data: any) => {
+        this.csgoempireInstance.tradingSocket.on('updated_item', (data: any) => {
             if (data.id === this.id) {
                 this.assignData(data);
 

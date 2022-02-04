@@ -9,13 +9,13 @@ export default class Shop {
         this.items = items;
         this.csgoempireInstance = csgoempireInstance;
 
-        if (this.csgoempireInstance.socket) {
+        if (this.csgoempireInstance.connectToSocket) {
             this.listenForEvents();
         }
     }
 
     listenForEvents() {
-        this.csgoempireInstance.socket.on('deleted_item', (itemId: number) => {
+        this.csgoempireInstance.tradingSocket.on('deleted_item', (itemId: number) => {
             this.items = this.items.filter((item: WithdrawItem) => item.id !== itemId);
         })
     }

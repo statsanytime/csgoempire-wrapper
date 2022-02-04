@@ -6,6 +6,7 @@ import WithdrawItem from './models/WithdrawItem';
 import DepositItem from './models/DepositItem';
 import Inventory from "./models/Inventory";
 import Shop from "./models/Shop";
+import Match from "./models/Match";
 
 type WithdrawalFilters = {
     page: number;
@@ -16,9 +17,15 @@ type WithdrawalFilters = {
     auction?: 'yes'|'no';
 }
 
+type Sockets = {
+    trading?: Socket;
+    matchbetting?: Socket;
+}
+
 type CSGOEmpireOptions = {
     baseApiUrl?: string;
     tradeSocketUrl?: string;
+    matchSocketUrl?: string;
     connectToSocket?: boolean;
 }
 
@@ -26,20 +33,26 @@ export default class CSGOEmpire {
     private apiKey: string;
     public baseApiUrl: string;
     public tradeSocketUrl: string;
+    public matchSocketUrl: string;
     public axios: AxiosInstance;
-    public socket: Socket;
+    public sockets: Sockets;
+    public connectToSocket: boolean;
+    public socketMetadata: any;
 
     constructor(apiKey: string, options: CSGOEmpireOptions = {}) {
         options = {
             connectToSocket: true,
             baseApiUrl: 'https://csgoempire.com/api/v2',
             tradeSocketUrl: 'wss://trade.csgoempire.com/trade',
+            matchSocketUrl: 'wss://roulette.csgoempire.com/matchbetting',
             ...options,
         };
 
         this.apiKey = apiKey;
         this.baseApiUrl = options.baseApiUrl;
         this.tradeSocketUrl = options.tradeSocketUrl;
+        this.matchSocketUrl = options.matchSocketUrl;
+        this.connectToSocket = options.connectToSocket;
 
         this.axios = axios.create({
             baseURL: this.baseApiUrl,
@@ -49,15 +62,31 @@ export default class CSGOEmpire {
             }
         });
 
-        if (options.connectToSocket) {
-            this.establishSocketConnection();
+        if (this.connectToSocket) {
+            this.sockets = {};
         }
     }
 
-    establishSocketConnection() {
-        console.log('👋 Connecting to socket...');
+    get tradingSocket() {
+        if (this.sockets.trading) {
+            return this.sockets.trading;
+        }
 
-        this.socket = io(this.tradeSocketUrl, {
+        return this.connectAndAuthenticateSocket('trading', this.tradeSocketUrl, 'Trading');
+    }
+
+    get matchbettingSocket() {
+        if (this.sockets.matchbetting) {
+            return this.sockets.matchbetting;
+        }
+
+        return this.connectAndAuthenticateSocket('matchbetting', this.matchSocketUrl, 'Matchbetting');
+    }
+
+    connectAndAuthenticateSocket(key: string, url: string, name: string = key) {
+        console.log(`👋 Connecting to ${name} socket...`);
+
+        this.sockets[key] = io(url, {
             transports: ['websocket'],
             path: '/s',
             reconnection: true,
@@ -68,29 +97,35 @@ export default class CSGOEmpire {
             },
         });
 
-        this.socket.on('connect', () => {
-            console.log('✅ Socket connected');
-            this.authenticateSocket();
+        this.sockets[key].on('error', (err) => console.error(err));
+        this.sockets[key].on('connect_error', (err) => console.error(`There was an error connecting to the ${name} socket`, err));
+
+        this.sockets[key].on('connect', async () => {
+            console.log(`⚡️ ${name} socket connected. Authenticating...`);
+
+            let metadata = await this.getSocketMetadata();
+
+            this.sockets[key].emit('identify', {
+                uid: metadata.user.id,
+                model: metadata.user,
+                authorizationToken: metadata.socket_token,
+                signature: metadata.socket_signature
+            });
+
+            console.log(`✅ ${name} socket authenticated`);
         });
 
-        this.socket.on('error', (err) => console.error(err));
-        this.socket.on('connect_error', (err) => console.error('There was an error connecting to the socket', err));
+        return this.sockets[key];
     }
 
-    async authenticateSocket() {
-        console.log('⚡️ Authenticating socket...');
+    async getSocketMetadata() {
+        if (this.socketMetadata) {
+            return this.socketMetadata;
+        }
 
-        let metadata_res = await this.get('/metadata/socket');
-        let metadata = metadata_res.data;
+        let res = await this.get('/metadata/socket');
 
-        this.socket.emit('identify', {
-            uid: metadata.user.id,
-            model: metadata.user,
-            authorizationToken: metadata.socket_token,
-            signature: metadata.socket_signature
-        });
-
-        console.log('✅ Socket authenticated');
+        return this.socketMetadata = res.data;
     }
 
     async get(url: string, config?: AxiosRequestConfig<any>) {
@@ -217,5 +252,11 @@ export default class CSGOEmpire {
         const res = await this.post(`/trading/deposit/${itemId}/sell`);
 
         return res.data;
+    }
+
+    async getMatches() {
+        const res = await this.get('/match-betting');
+
+        return res.data.map((match: Object) => new Match(match, this));
     }
 }

@@ -100,6 +100,16 @@ const auctions = await account.getActiveAuctions();
 // auctions = DepositItem[]
 ```
 
+### Get upcoming and running matches
+Returns an array of Match objects.
+
+```js
+// Retrive all active deposits/withdrawals
+const matches = await account.getMatches();
+
+// matches = Match[]
+```
+
 ### Update tradelink & Steam API-key
 
 ```js
