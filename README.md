@@ -25,6 +25,16 @@ import { CSGOEmpire } from 'csgoempire-wrapper';
 const account = new CSGOEmpire('YOUR_API_KEY');
 ```
 
+On top of this, it's also possible to customize the account further by passing in a configuration object. These are the default options, but they can be customized as needed.
+```js
+new CSGOEmpire('YOUR_API_KEY', {
+    connectToSocket: true,
+    baseApiUrl: 'https://csgoempire.com/api/v2',
+    tradeSocketUrl: 'wss://trade.csgoempire.com/trade',
+    matchSocketUrl: 'wss://roulette.csgoempire.com/matchbetting',
+})
+```
+
 ## Usage
 
 ### Deposits
