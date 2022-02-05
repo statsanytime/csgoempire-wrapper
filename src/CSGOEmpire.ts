@@ -40,7 +40,7 @@ export default class CSGOEmpire {
     public connectToSocket: boolean;
     public socketMetadata: any;
 
-    constructor(apiKey: string, options: CSGOEmpireOptions = {}) {
+    constructor(apiKey: string = null, options: CSGOEmpireOptions = {}) {
         options = {
             connectToSocket: true,
             baseApiUrl: 'https://csgoempire.com/api/v2',
@@ -58,7 +58,7 @@ export default class CSGOEmpire {
         this.axios = axios.create({
             baseURL: this.baseApiUrl,
             headers: {
-                'Authorization': `Bearer ${this.apiKey}`,
+                ...(this.apiKey && { 'Authorization': `Bearer ${this.apiKey}` }),
                 'Content-Type': 'application/json'
             }
         });
@@ -102,18 +102,22 @@ export default class CSGOEmpire {
         this.sockets[key].on('connect_error', (err) => console.error(`There was an error connecting to the ${name} socket`, err));
 
         this.sockets[key].on('connect', async () => {
-            console.log(`⚡️ ${name} socket connected. Authenticating...`);
+            if (this.apiKey) {
+                console.log(`⚡️ ${name} socket connected. Authenticating...`);
 
-            let metadata = await this.getSocketMetadata();
+                let metadata = await this.getSocketMetadata();
 
-            this.sockets[key].emit('identify', {
-                uid: metadata.user.id,
-                model: metadata.user,
-                authorizationToken: metadata.socket_token,
-                signature: metadata.socket_signature
-            });
+                this.sockets[key].emit('identify', {
+                    uid: metadata.user.id,
+                    model: metadata.user,
+                    authorizationToken: metadata.socket_token,
+                    signature: metadata.socket_signature
+                });
 
-            console.log(`✅ ${name} socket authenticated`);
+                console.log(`✅ ${name} socket authenticated`);
+            } else {
+                console.log(`✅ ${name} socket connected.`);
+            }
         });
 
         return this.sockets[key];
