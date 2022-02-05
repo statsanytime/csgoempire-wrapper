@@ -63,6 +63,15 @@ export default class Match extends EventEmitter {
                 this.emit('updated', this);
             }
         });
+
+        this.csgoempireInstance.matchbettingSocket.on('market_created', (data: any) => {
+            if (data.match_id == this.id) {
+                let market = new Market(data, this.csgoempireInstance);
+
+                this.markets.push(market);
+                this.emit('market-created', market);
+            }
+        })
     }
 
     assignData(data: any) {
