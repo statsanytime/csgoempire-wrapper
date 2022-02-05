@@ -7,6 +7,7 @@ import DepositItem from './models/DepositItem';
 import Inventory from "./models/Inventory";
 import Shop from "./models/Shop";
 import Match from "./models/Match";
+import MatchCollection from "./models/MatchCollection";
 
 type WithdrawalFilters = {
     page: number;
@@ -257,6 +258,9 @@ export default class CSGOEmpire {
     async getMatches() {
         const res = await this.get('/match-betting');
 
-        return res.data.map((match: Object) => new Match(match, this));
+        return new MatchCollection(
+            res.data.map((match: Object) => new Match(match, this)),
+            this,
+        );
     }
 }
