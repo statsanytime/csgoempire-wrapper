@@ -9,12 +9,12 @@ import Shop from "./models/Shop";
 import Match from "./models/Match";
 import MatchCollection from "./models/MatchCollection";
 
-type WithdrawalFilters = {
-    page: number;
-    per_page: number;
-    price_max_above: number;
-    sort: String;
-    order: String;
+type WithdrawalFilterOptions = {
+    page?: number;
+    per_page?: number;
+    price_max_above?: number;
+    sort?: String;
+    order?: String;
     auction?: 'yes'|'no';
 }
 
@@ -197,7 +197,7 @@ export default class CSGOEmpire {
         return res.data;
     }
 
-    async queryWithdrawItems(options?: WithdrawalFilters, addNewItems: boolean = false) {
+    async queryWithdrawItems(options?: WithdrawalFilterOptions, addNewItems: boolean = false) {
         const res = await this.get('/trading/items', {
             params: {
                 per_page: 160,
