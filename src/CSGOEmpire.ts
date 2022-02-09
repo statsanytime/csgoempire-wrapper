@@ -197,7 +197,7 @@ export default class CSGOEmpire {
         return res.data;
     }
 
-    async queryWithdrawItems(options: WithdrawalFilters = { per_page: 160, page: 1, price_max_above: 15, sort: 'desc', order: 'market_value' }) {
+    async queryWithdrawItems(options: WithdrawalFilters = { per_page: 160, page: 1, price_max_above: 15, sort: 'desc', order: 'market_value' }, addNewItems: boolean = false) {
         const res = await this.get('/trading/items', {
             params: options
         });
@@ -205,6 +205,7 @@ export default class CSGOEmpire {
         return new Shop(
             res.data.data.map((item: Object) => new WithdrawItem(item, this)),
             this,
+            addNewItems,
         );
     }
 
