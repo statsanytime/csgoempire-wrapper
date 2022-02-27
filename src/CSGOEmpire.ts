@@ -235,6 +235,7 @@ export default class CSGOEmpire {
         return {
             deposits: res.data.data.deposits.map((deposit: any) => new DepositItem({
                 ...deposit.items[0],
+                market_value: deposit.items[0].market_value * 100,
                 deposit_id: deposit.id,
             }, this)),
 
