@@ -237,6 +237,7 @@ export default class CSGOEmpire {
                 ...deposit.items[0],
                 market_value: deposit.items[0].market_value * 100,
                 deposit_id: deposit.id,
+                status: deposit.status,
             }, this)),
 
             withdrawals: res.data.data.withdrawals.map((withdrawal: any) => new WithdrawItem({
@@ -246,6 +247,7 @@ export default class CSGOEmpire {
                 auction_number_of_bids: withdrawal.metadata?.auction_number_of_bids,
                 auction_ends_at: withdrawal.metadata?.auction_ends_at,
                 auction_auto_withdraw_failed: withdrawal.metadata?.auction_auto_withdraw_failed,
+                status: withdrawal.status,
             }, this)),
         };
     }

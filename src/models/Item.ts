@@ -18,6 +18,7 @@ export default class Item extends EventEmitter {
     tradelock: Boolean;
     preview_id: String;
     price_is_unreliable: Boolean;
+    status: number;
 
     csgoempireInstance: CSGOEmpire;
 
@@ -50,6 +51,7 @@ export default class Item extends EventEmitter {
         this.tradelock = data.tradelock;
         this.preview_id = data.preview_id;
         this.price_is_unreliable = data.price_is_unreliable;
+        this.status = data.status;
     }
 
     listenForUpdates() {
