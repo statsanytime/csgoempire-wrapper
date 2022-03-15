@@ -69,4 +69,9 @@ export default class DepositItem extends Item {
     sellNow() {
         return this.csgoempireInstance.sellDepositNow(this.deposit_id);
     }
+
+    cancellable() {
+        // Item is in processing state
+        return this.status == 2;
+    }
 }
