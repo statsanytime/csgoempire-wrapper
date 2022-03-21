@@ -3,6 +3,11 @@ import { EventEmitter } from 'events';
 
 export default class Item extends EventEmitter {
     app_id: number;
+    auction_auto_withdraw_failed: Boolean;
+    auction_ends_at: Date;
+    auction_highest_bid: number;
+    auction_highest_bidder: number;
+    auction_number_of_bids: number;
     icon_url: String;
     id: number;
     market_name: String;
@@ -36,6 +41,11 @@ export default class Item extends EventEmitter {
 
     assignData(data: any) {
         this.app_id = data.app_id;
+        this.auction_auto_withdraw_failed = data.auction_auto_withdraw_failed;
+        this.auction_ends_at = new Date(data.auction_ends_at * 1000);
+        this.auction_highest_bid = data.auction_highest_bid / 100;
+        this.auction_highest_bidder = data.auction_highest_bidder;
+        this.auction_number_of_bids = data.auction_number_of_bids;
         this.icon_url = data.icon_url;
         this.id = data.id;
         this.market_name = data.market_name;

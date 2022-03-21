@@ -237,6 +237,11 @@ export default class CSGOEmpire {
                 ...deposit.items[0],
                 market_value: deposit.items[0].market_value * 100,
                 deposit_id: deposit.id,
+                auction_highest_bid: deposit.metadata?.auction_highest_bid,
+                auction_highest_bidder: deposit.metadata?.auction_highest_bidder,
+                auction_number_of_bids: deposit.metadata?.auction_number_of_bids,
+                auction_ends_at: deposit.metadata?.auction_ends_at,
+                auction_auto_withdraw_failed: deposit.metadata?.auction_auto_withdraw_failed,
                 status: deposit.status,
             }, this)),
 
