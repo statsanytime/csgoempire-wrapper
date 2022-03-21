@@ -71,7 +71,7 @@ export default class DepositItem extends Item {
     }
 
     cancellable() {
-        // Item is in processing state
-        return this.status == 2;
+        // Item is in processing state and auction has ended OR no bids have been placed
+        return this.status == 2 && (this.auction_ends_at < new Date() || this.auction_number_of_bids == 0);
     }
 }
