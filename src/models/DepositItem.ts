@@ -57,7 +57,8 @@ export default class DepositItem extends Item {
     }
 
     depositForValue(value: number) {
-        let custom_price_percentage = ((value / this.market_value) - 1) * 100;
+        let base_price = this.market_value / (1 + (this.custom_price_percentage / 100));
+        let custom_price_percentage = ((value / base_price) - 1) * 100;
 
         return this.deposit(Math.round(custom_price_percentage));
     }
