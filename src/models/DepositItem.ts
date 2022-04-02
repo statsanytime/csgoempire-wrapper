@@ -42,6 +42,10 @@ export default class DepositItem extends Item {
         this.deposit_id = data.deposit_id;
     }
 
+    get base_price() {
+        return this.market_value / (1 + (this.custom_price_percentage / 100));
+    }
+
     async deposit(custom_price_percentage: number = 0) {
         if (custom_price_percentage) {
             this.custom_price_percentage = custom_price_percentage;
@@ -57,8 +61,7 @@ export default class DepositItem extends Item {
     }
 
     depositForValue(value: number) {
-        let base_price = this.market_value / (1 + (this.custom_price_percentage / 100));
-        let custom_price_percentage = ((value / base_price) - 1) * 100;
+        let custom_price_percentage = ((value / this.base_price) - 1) * 100;
 
         return this.deposit(Math.round(custom_price_percentage));
     }
