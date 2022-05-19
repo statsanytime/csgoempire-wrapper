@@ -113,10 +113,14 @@ export default class CSGOEmpire {
                     authorizationToken: metadata.socket_token,
                     signature: metadata.socket_signature
                 });
-
-                console.log(`✅ ${name} socket authenticated`);
             } else {
                 console.log(`✅ ${name} socket connected.`);
+            }
+        });
+
+        this.sockets[key].on('init', (data) => {
+            if (data?.authenticated) {
+                console.log(`✅ ${name} socket authenticated`);
             }
         });
 
