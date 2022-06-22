@@ -279,12 +279,25 @@ export default class CSGOEmpire {
         return res.data;
     }
 
-    async getMatches() {
-        const res = await this.get('/match-betting');
+    async getMatches(page: number = 1, per_page: number = 100): Promise<MatchCollection> {
+        const res = await this.get('/match-betting', {
+            params: {
+                page,
+                per_page,
+            }
+        });
 
         return new MatchCollection(
-            res.data.map((match: Object) => new Match(match, this)),
+            res.data,
             this,
         );
+    }
+
+    async getAllMatches(): Promise<MatchCollection> {
+        let collection = await this.getMatches(1);
+
+        await collection.fetchRemainingMatches();
+
+        return collection;
     }
 }

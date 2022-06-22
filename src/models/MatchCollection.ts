@@ -4,12 +4,18 @@ import Match from "./Match";
 
 export default class MatchCollection extends EventEmitter {
     matches: Match[];
+    fetchedPages: number[];
+    totalMatches: number;
+    perPage: number;
     csgoempireInstance: CSGOEmpire;
 
-    constructor(matches: Match[], csgoempireInstance: CSGOEmpire) {
+    constructor(pagination: any, csgoempireInstance: CSGOEmpire) {
         super();
 
-        this.matches = matches;
+        this.matches = pagination.data.map((match: Object) => new Match(match, csgoempireInstance));
+        this.fetchedPages = [pagination.current_page];
+        this.totalMatches = pagination.total;
+        this.perPage = pagination.per_page;
         this.csgoempireInstance = csgoempireInstance;
 
         if (this.csgoempireInstance.connectToSocket) {
@@ -24,5 +30,27 @@ export default class MatchCollection extends EventEmitter {
             this.matches.push(match);
             this.emit('match-created', match);
         });
+    }
+
+    async fetchRemainingMatches() {
+        let totalPages = Math.ceil(this.totalMatches / this.perPage);
+        let promises = [];
+
+        for (let i = 1; i <= totalPages; i++) {
+            if (this.fetchedPages.includes(i)) {
+                continue;
+            }
+
+            promises.push(this.csgoempireInstance.getMatches(i, this.perPage));
+        }
+
+        let collections = await Promise.all(promises);
+
+        collections.forEach((collection: MatchCollection) => {
+            this.matches = this.matches.concat(collection.matches);
+            this.fetchedPages = this.fetchedPages.concat(collection.fetchedPages);
+        });
+
+        return this;
     }
 }
