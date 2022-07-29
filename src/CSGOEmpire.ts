@@ -38,7 +38,6 @@ export default class CSGOEmpire {
     public axios: AxiosInstance;
     public sockets: Sockets;
     public connectToSocket: boolean;
-    public socketMetadata: any;
 
     constructor(apiKey: string = null, options: CSGOEmpireOptions = {}) {
         options = {
@@ -136,13 +135,9 @@ export default class CSGOEmpire {
     }
 
     async getSocketMetadata() {
-        if (this.socketMetadata) {
-            return this.socketMetadata;
-        }
-
         let res = await this.get('/metadata/socket');
 
-        return this.socketMetadata = res.data;
+        return res.data;
     }
 
     async get(url: string, config?: AxiosRequestConfig<any>) {
