@@ -118,6 +118,14 @@ export default class CSGOEmpire {
             }
         });
 
+        this.sockets[key].on('disconnect', () => {
+            console.log(`🚨 ${name} socket disconnected.`);
+        });
+
+        this.sockets[key].on('reconnect', () => {
+            console.log(`🎉 ${name} socket reconnected.`);
+        });
+
         this.sockets[key].on('init', (data) => {
             if (data?.authenticated) {
                 console.log(`✅ ${name} socket authenticated`);
