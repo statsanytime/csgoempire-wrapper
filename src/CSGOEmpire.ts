@@ -170,14 +170,20 @@ export default class CSGOEmpire {
         return res.data;
     }
 
-    async makeDeposit(item: Item) {
+    makeDeposit(item: Item) {
+        return this.makeDeposits([item]);
+    }
+
+    async makeDeposits(items: Item[]) {
         try {
             const res = await this.post(`/trading/deposit`, {
-                items: [{
-                    id: item.id,
-                    custom_price_percentage: item.custom_price_percentage,
-                    coin_value: item.market_value_cents,
-                }]
+                items: items.map(item => {
+                    return {
+                        id: item.id,
+                        custom_price_percentage: item.custom_price_percentage,
+                        coin_value: item.market_value_cents,
+                    };
+                }),
             });
     
             return res.data.deposits;
