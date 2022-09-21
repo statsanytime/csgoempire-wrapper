@@ -170,19 +170,30 @@ export default class CSGOEmpire {
         return res.data;
     }
 
-    makeDeposit(item: Item) {
+    makeDeposit(item: DepositItem) {
         return this.makeDeposits([item]);
     }
 
-    async makeDeposits(items: Item[]) {
+    async makeDeposits(items: DepositItem[]) {
         try {
             const res = await this.post(`/trading/deposit`, {
-                items: items.map(item => {
-                    return {
-                        id: item.id,
-                        custom_price_percentage: item.custom_price_percentage,
-                        coin_value: item.market_value_cents,
-                    };
+                items: items.map((item: DepositItem) => {
+                    if (item.deposit_value) {
+                        return {
+                            id: item.id,
+                            coin_value: item.deposit_value * 100,
+                        };
+                    }
+
+                    if (item.deposit_percentage && item.deposit_value) {
+                        return {
+                            id: item.id,
+                            custom_price_percentage: item.deposit_percentage,
+                            coin_value: item.deposit_value,
+                        };
+                    }
+
+                    throw new Error('You must provide either set a deposit value or both a deposit value and a deposit percentage for each item before it can be deposited.');
                 }),
             });
     

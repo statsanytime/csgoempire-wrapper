@@ -19,6 +19,8 @@ export default class DepositItem extends Item {
     quality: number;
     rarity: String;
     type: String;
+    deposit_value: number;
+    deposit_percentage: number;
 
     constructor(data, csgoempireInstance: CSGOEmpire) {
         super(data, csgoempireInstance);
@@ -46,11 +48,7 @@ export default class DepositItem extends Item {
         return this.market_value / (1 + (this.custom_price_percentage / 100));
     }
 
-    async deposit(custom_price_percentage: number = 0) {
-        if (custom_price_percentage) {
-            this.custom_price_percentage = custom_price_percentage;
-        }
-
+    async deposit() {
         let deposit = await this.csgoempireInstance.makeDeposit(this);
 
         if (deposit.success) {
@@ -61,9 +59,22 @@ export default class DepositItem extends Item {
     }
 
     depositForValue(value: number) {
-        let custom_price_percentage = ((value / this.base_price) - 1) * 100;
+        this.setDepositValue(value);
 
-        return this.deposit(Math.round(custom_price_percentage));
+        return this.deposit();
+    }
+
+    setDepositValue(value: number) {
+        this.deposit_value = value;
+
+        return this;
+    }
+
+    setDepositPercentage(percentage: number) {
+        this.deposit_value = this.base_price * (1 + (percentage / 100));
+        this.deposit_percentage = percentage;
+
+        return this;
     }
 
     cancel() {
