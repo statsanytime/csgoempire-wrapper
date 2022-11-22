@@ -49,7 +49,7 @@ const inventory = await account.getInventory();
 let item = inventory.items.find(item => item.market_value > 10);
 
 // Deposit it for +25%
-item.deposit(25);
+item.setDepositPercentage(25).deposit();
 ```
 
 #### Cancel deposit
