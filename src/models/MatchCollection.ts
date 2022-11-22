@@ -12,15 +12,37 @@ export default class MatchCollection extends EventEmitter {
     constructor(pagination: any, csgoempireInstance: CSGOEmpire) {
         super();
 
-        this.matches = pagination.data.map((match: Object) => new Match(match, csgoempireInstance));
         this.fetchedPages = [pagination.current_page];
         this.totalMatches = pagination.total;
         this.perPage = pagination.per_page;
         this.csgoempireInstance = csgoempireInstance;
 
+        this.matches = Object.values(pagination.data.matches).map((match: Object) => this.unflattenMatch(match, pagination.data));
+
         if (this.csgoempireInstance.connectToSocket) {
             this.listenForEvents();
         }
+    }
+
+    unflattenMatch(match: any, data: any): Match {
+        let markets = Object.values(data.markets).filter((market: any) => market.match_id === match.id).map((market: any) => {
+            let selections = Object.values(data.selections).filter((selection: any) => selection.market_id === market.id);
+
+            return {
+                ...market,
+                selections
+            };
+        });
+
+        let teams = Object.values(data.teams).filter((team: any) => {
+            return team.id === match.team1_id || team.id === match.team2_id;
+        });
+
+        return new Match({
+            match,
+            teams,
+            markets,
+        }, this.csgoempireInstance);
     }
 
     listenForEvents() {

@@ -300,7 +300,7 @@ export default class CSGOEmpire {
     }
 
     async getMatches(page: number = 1, per_page: number = 100): Promise<MatchCollection> {
-        const res = await this.get('/match-betting', {
+        const res = await this.get('/match-betting/flattened', {
             params: {
                 page,
                 per_page,

@@ -31,22 +31,16 @@ export default class Match extends EventEmitter {
 
     csgoempireInstance: CSGOEmpire;
 
-    constructor(data: any, csgoempireInstance: CSGOEmpire) {
+    constructor({ match, teams, markets }: any, csgoempireInstance: CSGOEmpire) {
         super();
 
         this.csgoempireInstance = csgoempireInstance;
 
-        this.assignData(data);
+        this.assignData(match);
 
-        this.teams = [data.team1, data.team2].reduce((teams: Team[], team: Object) => {
-            if (team) {
-                teams.push(new Team(team, this.csgoempireInstance));
-            }
+        this.teams = teams.map((team: any) => new Team(team, this.csgoempireInstance));
 
-            return teams;
-        }, []);
-
-        this.markets = data.markets.map((market: Object) => new Market(market, this.csgoempireInstance));
+        this.markets = markets.map((market: Object) => new Market(market, this.csgoempireInstance));
 
         if (this.csgoempireInstance.connectToSocket) {
             this.listenForUpdates();
