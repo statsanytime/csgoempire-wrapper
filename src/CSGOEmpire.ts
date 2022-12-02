@@ -258,8 +258,8 @@ export default class CSGOEmpire {
 
         return {
             deposits: res.data.data.deposits.map((deposit: any) => new DepositItem({
-                ...deposit.items[0],
-                market_value: deposit.items[0].market_value * 100,
+                ...deposit.item,
+                market_value: deposit.item.market_value * 100,
                 deposit_id: deposit.id,
                 auction_highest_bid: deposit.metadata?.auction_highest_bid,
                 auction_highest_bidder: deposit.metadata?.auction_highest_bidder,
@@ -270,7 +270,7 @@ export default class CSGOEmpire {
             }, this)),
 
             withdrawals: res.data.data.withdrawals.map((withdrawal: any) => new WithdrawItem({
-                ...withdrawal.items[0],
+                ...withdrawal.item,
                 auction_highest_bid: withdrawal.metadata?.auction_highest_bid,
                 auction_highest_bidder: withdrawal.metadata?.auction_highest_bidder,
                 auction_number_of_bids: withdrawal.metadata?.auction_number_of_bids,
