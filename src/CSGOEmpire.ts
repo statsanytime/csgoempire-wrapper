@@ -164,8 +164,14 @@ export default class CSGOEmpire {
         }
     }
 
-    async cancelDeposit(itemId: number) {
-        const res = await this.post(`/trading/deposit/${itemId}/cancel`);
+    cancelDeposit(depositId: number) {
+        return this.cancelDeposits([depositId])[depositId];
+    }
+
+    async cancelDeposits(depositIds: number[]) {
+        const res = await this.post('/trading/deposit/cancel', {
+            ids: depositIds,
+        });
 
         return res.data;
     }
