@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import io, { Socket } from 'socket.io-client';
+import 'dotenv/config';
 
 import Item from './models/Item';
 import WithdrawItem from './models/WithdrawItem';
@@ -28,6 +29,7 @@ type CSGOEmpireOptions = {
     tradeSocketUrl?: string;
     matchSocketUrl?: string;
     connectToSocket?: boolean;
+    origin?: string;
 }
 
 export default class CSGOEmpire {
@@ -40,11 +42,13 @@ export default class CSGOEmpire {
     public connectToSocket: boolean;
 
     constructor(apiKey: string = null, options: CSGOEmpireOptions = {}) {
+        const origin = options.origin ?? process.env.CSGOEMPIRE_WRAPPER_ORIGIN ?? 'csgoempire.com';
+
         options = {
             connectToSocket: true,
-            baseApiUrl: 'https://csgoempire.com/api/v2',
-            tradeSocketUrl: 'wss://trade.csgoempire.com/trade',
-            matchSocketUrl: 'wss://roulette.csgoempire.com/matchbetting',
+            baseApiUrl: `https://${origin}/api/v2`,
+            tradeSocketUrl: `wss://trade.${origin}/trade`,
+            matchSocketUrl: `wss://roulette.${origin}/matchbetting`,
             ...options,
         };
 
