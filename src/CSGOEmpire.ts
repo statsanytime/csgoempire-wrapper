@@ -217,8 +217,10 @@ export default class CSGOEmpire {
         }
     }
 
-    async makeWithdrawal(itemId: number) {
-        const res = await this.post(`/trading/deposit/${itemId}/withdraw`);
+    async makeWithdrawal(itemId: number, amount: number) {
+        const res = await this.post(`/trading/deposit/${itemId}/withdraw`, {
+            coin_value: Math.round(amount * 100),
+        });
 
         return res.data;
     }

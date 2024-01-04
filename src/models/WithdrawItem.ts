@@ -15,7 +15,7 @@ export default class WithdrawItem extends Item {
     }
 
     withdraw() {
-        return this.csgoempireInstance.makeWithdrawal(this.id);
+        return this.csgoempireInstance.makeWithdrawal(this.id, this.market_value);
     }
 
     bid(amount?: number) {
